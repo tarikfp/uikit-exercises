@@ -17,6 +17,7 @@ class DetailViewController: UIViewController {
     
     
     navigationItem.largeTitleDisplayMode = .never
+    navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(onSharePress))
     
     
     if let imageToLoad = selectedImage{
@@ -34,6 +35,24 @@ class DetailViewController: UIViewController {
   override func viewWillDisappear(_ animated: Bool) {
     super.viewWillDisappear(animated)
     navigationController?.hidesBarsOnTap = false
+  }
+  
+  @objc func onSharePress(){
+    guard let image = ImageView.image?.jpegData(compressionQuality: 1) else {
+      let alertVC = UIAlertController(title: "Warning", message: "Image does not exist", preferredStyle: .alert)
+      present(alertVC, animated: true)
+      return
+    }
+
+    guard let imageName = selectedImage else {
+      let alertVC = UIAlertController(title: "Warning", message: "Image does not exist", preferredStyle: .alert)
+      present(alertVC, animated: true)
+      return
+    }
+    
+    let activityVC = UIActivityViewController(activityItems: [image, imageName], applicationActivities: [])
+    activityVC.popoverPresentationController?.barButtonItem = navigationItem.rightBarButtonItem
+    present(activityVC, animated: true)
   }
   
   
