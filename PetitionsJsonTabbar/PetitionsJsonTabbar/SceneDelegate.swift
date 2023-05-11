@@ -26,7 +26,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     homeVC.tabBarItem = UITabBarItem(tabBarSystemItem: .recents, tag: 0)
     favoritesVC.tabBarItem = UITabBarItem(tabBarSystemItem: .favorites, tag: 1)
 
-
     tabbar.viewControllers = [homeVC, favoritesVC]
 
 

@@ -28,9 +28,10 @@ class DetailViewController: UIViewController {
     }
     
     NSLayoutConstraint.activate([
-      petitionFullBodyLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-      petitionFullBodyLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-      petitionFullBodyLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+      petitionFullBodyLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
+      petitionFullBodyLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+      petitionFullBodyLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16)
+
     ])
     
     

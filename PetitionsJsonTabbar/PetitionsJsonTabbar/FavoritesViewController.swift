@@ -31,10 +31,21 @@ class FavoritesViewController: UIViewController, UITableViewDelegate, UITableVie
     
     appTableView.delegate = self
     appTableView.dataSource = self
+
+    navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .bookmarks, target: self, action: #selector(onRightBarButtonItemPressed))
+
     
     view.addSubview(appTableView)
     
     favoritePetitions = mainVC.getPetitionsData()
+  }
+
+  @objc func onRightBarButtonItemPressed() {
+    let alertVC = UIAlertController(title: "Information", message: "This data's source is:\n\n \(navigationController?.tabBarItem.tag==0 ?"https://www.hackingwithswift.com/samples/petitions-0.json":" https://www.hackingwithswift.com/samples/petitions-1.json")" , preferredStyle: .alert)
+
+    alertVC.addAction(.init(title: "Ok", style: .default))
+
+    present(alertVC, animated: true)
   }
 
 

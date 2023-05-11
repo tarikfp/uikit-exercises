@@ -30,10 +30,21 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     appTableView.delegate = self
     appTableView.dataSource = self
-    
+
+    navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .bookmarks, target: self, action: #selector(onRightBarButtonItemPressed))
+
+
     view.addSubview(appTableView)
     
     petitions = getPetitionsData()
+  }
+
+  @objc func onRightBarButtonItemPressed() {
+    let alertVC = UIAlertController(title: "Information", message: "This data's source is:\n\n \(navigationController?.tabBarItem.tag==0 ?"https://www.hackingwithswift.com/samples/petitions-0.json":" https://www.hackingwithswift.com/samples/petitions-1.json")" , preferredStyle: .alert)
+
+    alertVC.addAction(.init(title: "Ok", style: .default))
+
+    present(alertVC, animated: true)
   }
   
   func getPetitionsData()-> [Petition] {
@@ -76,6 +87,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
   }
   
   func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+
     let detailVC = DetailViewController()
     detailVC.selectedPetition = petitions[indexPath.row]
     detailVC.title = petitions[indexPath.row].title
