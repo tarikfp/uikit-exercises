@@ -35,8 +35,22 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
 
 
     view.addSubview(appTableView)
+
+    let loader = UIAlertController(title: nil, message: "", preferredStyle: .alert)
+        loader.view.tintColor = .black
+        let activityIndicator = UIActivityIndicatorView(style: .gray)
+        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
+        activityIndicator.startAnimating()
+        loader.view.addSubview(activityIndicator)
+        NSLayoutConstraint.activate([
+            activityIndicator.centerXAnchor.constraint(equalTo: loader.view.centerXAnchor),
+            activityIndicator.centerYAnchor.constraint(equalTo: loader.view.centerYAnchor)
+        ])
+        present(loader, animated: true)
+
+    performSelector(inBackground: #selector(getPetitionsData), with: loader)
     
-    petitions = getPetitionsData()
+
   }
 
   @objc func onRightBarButtonItemPressed() {
@@ -47,22 +61,29 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     present(alertVC, animated: true)
   }
   
-  func getPetitionsData()-> [Petition] {
+  @objc func getPetitionsData(loader: UIAlertController) {
     var finalURLString: String = ""
     if navigationController?.tabBarItem.tag == 0 {
       finalURLString = "https://www.hackingwithswift.com/samples/petitions-1.json"
     } else {
       finalURLString = "https://www.hackingwithswift.com/samples/petitions-2.json"
     }
-    
+
     if let url = URL(string: finalURLString){
       if let data = try? Data(contentsOf: url){
-        return parsePetitionsData(from: data).results
+        self.petitions =  self.parsePetitionsData(from: data).results
+        appTableView.performSelector(onMainThread: #selector(appTableView.reloadData), with: nil, waitUntilDone: false)
+
+        performSelector(onMainThread: #selector(self.dismissLoader), with: loader, waitUntilDone: false)
+
       }
-      return []
     }
-    return []
   }
+
+  @objc func dismissLoader(_ loader: UIAlertController) {
+      loader.dismiss(animated: true, completion: nil)
+  }
+
   
   func parsePetitionsData(from data:Data)-> Petitions {
     let decoder = JSONDecoder()

@@ -36,8 +36,31 @@ class FavoritesViewController: UIViewController, UITableViewDelegate, UITableVie
 
     
     view.addSubview(appTableView)
-    
-    favoritePetitions = mainVC.getPetitionsData()
+
+    performSelector(inBackground: #selector(getPetitionsData), with: nil)
+
+
+  }
+
+  @objc func getPetitionsData() {
+    var finalURLString: String = ""
+    if navigationController?.tabBarItem.tag == 0 {
+      finalURLString = "https://www.hackingwithswift.com/samples/petitions-1.json"
+    } else {
+      finalURLString = "https://www.hackingwithswift.com/samples/petitions-2.json"
+    }
+
+    if let url = URL(string: finalURLString){
+      if let data = try? Data(contentsOf: url){
+        self.favoritePetitions =  self.parsePetitionsData(from: data).results
+        appTableView.performSelector(onMainThread: #selector(appTableView.reloadData), with: nil, waitUntilDone: false)
+      }
+    }
+  }
+
+  func parsePetitionsData(from data:Data)-> Petitions {
+    let decoder = JSONDecoder()
+    return try! decoder.decode(Petitions.self, from: data)
   }
 
   @objc func onRightBarButtonItemPressed() {
