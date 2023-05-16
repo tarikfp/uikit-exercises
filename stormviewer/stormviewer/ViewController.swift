@@ -17,6 +17,26 @@ class ViewController: UITableViewController {
     title = "Storm Viewer"
     navigationController?.navigationBar.prefersLargeTitles = true
 
+    let loader = UIAlertController(title: nil, message: "", preferredStyle: .alert)
+        loader.view.tintColor = .black
+        let activityIndicator = UIActivityIndicatorView(style: .gray)
+        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
+        activityIndicator.color = .cyan
+        activityIndicator.startAnimating()
+        loader.view.addSubview(activityIndicator)
+        NSLayoutConstraint.activate([
+            activityIndicator.centerXAnchor.constraint(equalTo: loader.view.centerXAnchor),
+            activityIndicator.centerYAnchor.constraint(equalTo: loader.view.centerYAnchor)
+        ])
+        present(loader, animated: true)
+
+
+    performSelector(inBackground: #selector(loadImages), with: loader)
+
+    // Do any additional setup after loading the view.
+  }
+
+  @objc func loadImages(loader: UIAlertController){
     let fm = FileManager.default
     let path = Bundle.main.resourcePath!
     let items = try! fm.contentsOfDirectory(atPath: path)
@@ -29,7 +49,9 @@ class ViewController: UITableViewController {
       }
     }
 
-    // Do any additional setup after loading the view.
+    DispatchQueue.main.async {
+      loader.dismiss(animated: true)
+    }
   }
 
   override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
