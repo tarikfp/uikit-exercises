@@ -15,6 +15,8 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
   override func viewDidLoad() {
     super.viewDidLoad()
 
+    title = "Collection view"
+
     let layout = UICollectionViewFlowLayout()
     layout.itemSize = CGSize(width: 100, height: 150)
     layout.sectionInset = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
@@ -27,6 +29,8 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
     collectionView.delegate = self
     collectionView.register(PersonCell.self, forCellWithReuseIdentifier: "PersonCell")
     view.addSubview(collectionView)
+
+    setSavedData()
 
     navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addNewPerson))
 
@@ -52,6 +56,7 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
 
     let person = Person(name: "Unknown", image: imageName)
     persons.append(person)
+    self.save()
     collectionView?.reloadData()
     dismiss(animated: true)
   }
@@ -87,6 +92,9 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
 
       let newName = ac?.textFields![0]
       person.name = (newName?.text)!
+      let defaults = UserDefaults.standard
+
+      self?.save()
 
       self?.collectionView.reloadData()
     })
@@ -100,6 +108,31 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
     let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
     let documentsDirectory = paths[0]
     return documentsDirectory
+  }
+
+  func save(){
+    let jsonEncoder = JSONEncoder()
+
+    if let encodedPersonsData = try? jsonEncoder.encode(self.persons){
+      let defaults = UserDefaults.standard
+      defaults.set(encodedPersonsData, forKey: "Persons")
+    }
+  }
+
+  func setSavedData() {
+    let defaults = UserDefaults.standard
+
+    if let savedPersonsData = defaults.object(forKey: "Persons") as? Data{
+      let decoder = JSONDecoder()
+      do {
+        persons = try decoder.decode([Person].self, from: savedPersonsData)
+      } catch {
+        print("Failed to load persons data from storage")
+      }
+
+
+    }
+
   }
 
 }
